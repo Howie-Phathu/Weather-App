@@ -4,10 +4,20 @@ import { useTemperature } from "../contexts/TemperatureContext";
 import "./Search.css";
 
 interface WeatherData {
-  name: string;
-  main: { temp: number; humidity: number };
-  wind: { speed: number };
-  weather: { description: string; icon: string }[];
+  location: {
+    name: string;
+    country: string;
+  };
+  current: {
+    temp_c: number;
+    temp_f: number;
+    humidity: number;
+    wind_kph: number;
+    condition: {
+      text: string;
+      icon: string;
+    };
+  };
 }
 
 export default function Search() {
@@ -15,7 +25,7 @@ export default function Search() {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { getApiUnits, getDisplayUnit } = useTemperature();
+  const { unit, getDisplayUnit } = useTemperature();
 
   const handleSearch = async () => {
     const apiKey = import.meta.env.VITE_OPENWEATHER_KEY;
@@ -27,7 +37,7 @@ export default function Search() {
 
     try {
       const res = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${getApiUnits()}&appid=${apiKey}`
+        `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&aqi=no`
       );
       if (!res.ok) throw new Error("City not found");
 
@@ -37,8 +47,8 @@ export default function Search() {
       // Save city to localStorage
       const stored = localStorage.getItem("savedCities");
       const savedCities = stored ? JSON.parse(stored) : [];
-      if (!savedCities.includes(data.name)) {
-        savedCities.push(data.name);
+      if (!savedCities.includes(data.location.name)) {
+        savedCities.push(data.location.name);
         localStorage.setItem("savedCities", JSON.stringify(savedCities));
       }
     } catch (err: any) {
@@ -47,6 +57,29 @@ export default function Search() {
       setLoading(false);
     }
   };
+
+  if (!weather) {
+    return (
+      <div className="search-page">
+        <h1>Search City</h1>
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Enter city name..."
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+          />
+          <button onClick={handleSearch} disabled={loading}>
+            {loading ? "Searching..." : "Search"}
+          </button>
+        </div>
+
+        {error && <p className="search-error">{error}</p>}
+      </div>
+    );
+  }
+
+  const temperature = unit === 'celsius' ? weather.current.temp_c : weather.current.temp_f;
 
   return (
     <div className="search-page">
@@ -64,17 +97,15 @@ export default function Search() {
       </div>
 
       {error && <p className="search-error">{error}</p>}
-      {weather && (
-        <WeatherCard
-          city={weather.name}
-          temp={Math.round(weather.main.temp)}
-          humidity={weather.main.humidity}
-          wind={Math.round(weather.wind.speed)}
-          description={weather.weather[0].description}
-          icon={weather.weather[0].icon}
-          unit={getDisplayUnit()}
-        />
-      )}
+      <WeatherCard
+        city={weather.location.name}
+        temp={Math.round(temperature)}
+        humidity={weather.current.humidity}
+        wind={Math.round(weather.current.wind_kph)}
+        description={weather.current.condition.text}
+        icon={weather.current.condition.icon}
+        unit={getDisplayUnit()}
+      />
     </div>
   );
 }

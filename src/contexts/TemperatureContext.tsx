@@ -6,7 +6,6 @@ type TemperatureUnit = 'celsius' | 'fahrenheit';
 interface TemperatureContextType {
   unit: TemperatureUnit;
   toggleUnit: () => void;
-  getApiUnits: () => string;
   getDisplayUnit: () => string;
 }
 
@@ -31,10 +30,6 @@ export const TemperatureProvider: React.FC<TemperatureProviderProps> = ({ childr
     setUnit(prev => prev === 'celsius' ? 'fahrenheit' : 'celsius');
   };
 
-  const getApiUnits = () => {
-    return unit === 'celsius' ? 'metric' : 'imperial';
-  };
-
   const getDisplayUnit = () => {
     return unit === 'celsius' ? '°C' : '°F';
   };
@@ -42,7 +37,6 @@ export const TemperatureProvider: React.FC<TemperatureProviderProps> = ({ childr
   const value = {
     unit,
     toggleUnit,
-    getApiUnits,
     getDisplayUnit,
   };
 
