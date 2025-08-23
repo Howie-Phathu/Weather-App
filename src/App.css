@@ -1,0 +1,47 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.app-header {
+  background-color: #1976d2;
+  padding: 10px 20px;
+}
+
+.nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.nav-bar a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.nav-bar a:hover {
+  text-decoration: underline;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.app-main {
+  padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .nav-bar {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .nav-links {
+    justify-content: center;
+  }
+}

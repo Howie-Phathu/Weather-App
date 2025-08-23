@@ -1,0 +1,37 @@
+.temperature-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #f0f0f0;
+  border-radius: 20px;
+  padding: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  color: #666;
+  transition: all 0.2s ease;
+  min-width: 40px;
+}
+
+.toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+.toggle-btn.active {
+  background: #007bff;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+}
+
+.toggle-btn.active:hover {
+  background: #0056b3;
+}
