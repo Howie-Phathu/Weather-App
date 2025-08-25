@@ -22,14 +22,12 @@ interface WeatherData {
 
 export default function Home() {
     const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { unit, getDisplayUnit } = useTemperature();
 
     useEffect(() => {
         if (!navigator.geolocation) {
             setError("Geolocation is not supported by this browser.");
-            setLoading(false);
             return;
         }
 
@@ -48,41 +46,74 @@ export default function Home() {
                     setWeatherData(data);
                 } catch (error: any) {
                     setError(`Error fetching weather data: ${error.message}`);
-                } finally {
-                    setLoading(false);
                 }
             },
             (error) => {
                 setError(`Geolocation error: ${error.message}`);
-                setLoading(false);
             }
         );
     }, []);
 
-    if (loading) {
-        return <p className="loading">Loading...</p>;
-    }
-    if (error) {
-        return <p className="error">{error}</p>;
-    }
-    if (!weatherData) {
-        return <p className="error">No weather data available.</p>;
-    }
-
-    const temperature = unit === 'celsius' ? weatherData.current.temp_c : weatherData.current.temp_f;
-
     return(
         <div className="home-page">
-            <h1>Current Location Weather</h1>
-            <WeatherCard
-                city={weatherData.location.name}
-                temp={Math.round(temperature)}
-                humidity={weatherData.current.humidity}
-                wind={Math.round(weatherData.current.wind_kph)}
-                description={weatherData.current.condition.text}
-                icon={weatherData.current.condition.icon}
-                unit={getDisplayUnit()}
-            />
+            <div className="hero-section">
+                <h1 className="hero-title">Welcome to WeatherApp</h1>
+                <p className="hero-subtitle">
+                    Your personal weather companion that allows you to see your current location's weather 
+                    as well as any other location you search for around the world.
+                </p>
+                <div className="hero-features">
+                    <div className="feature-item">
+                        <span className="feature-icon">📍</span>
+                        <span>Current Location Weather</span>
+                    </div>
+                    <div className="feature-item">
+                        <span className="feature-icon">🔍</span>
+                        <span>Search Any City</span>
+                    </div>
+                    <div className="feature-item">
+                        <span className="feature-icon">💾</span>
+                        <span>Save Favorite Locations</span>
+                    </div>
+                    <div className="feature-item">
+                        <span className="feature-icon">🌡️</span>
+                        <span>Celsius/Fahrenheit Toggle</span>
+                    </div>
+                </div>
+            </div>
+
+            {error && (
+                <div className="error-message">
+                    <p>{error}</p>
+                    <p className="error-hint">Try refreshing the page or check your internet connection.</p>
+                </div>
+            )}
+
+            {weatherData && (
+                <div className="current-weather-section">
+                    <h2 className="section-title">Current Location Weather</h2>
+                    <WeatherCard
+                        city={weatherData.location.name}
+                        temp={Math.round(unit === 'celsius' ? weatherData.current.temp_c : weatherData.current.temp_f)}
+                        humidity={weatherData.current.humidity}
+                        wind={Math.round(weatherData.current.wind_kph)}
+                        description={weatherData.current.condition.text}
+                        icon={weatherData.current.condition.icon}
+                        unit={getDisplayUnit()}
+                    />
+                </div>
+            )}
+
+            {!weatherData && !error && (
+                <div className="loading-placeholder">
+                    <div className="loading-animation">
+                        <div className="loading-dot"></div>
+                        <div className="loading-dot"></div>
+                        <div className="loading-dot"></div>
+                    </div>
+                    <p>Detecting your location...</p>
+                </div>
+            )}
         </div>
     )
 }

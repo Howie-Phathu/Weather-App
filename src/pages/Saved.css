@@ -1,20 +1,131 @@
 .saved-page {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 20px;
+}
+
+.saved-page h1 {
+  text-align: center;
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin: 0;
+  padding: 60px 20px 40px 20px;
+  color: #2d3748;
+  position: relative;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.saved-page h1::after {
+  content: '';
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 2px;
 }
 
 .saved-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 30px;
+  margin: 0;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  flex: 1;
+  overflow-y: auto;
 }
 
-.saved-loading,
+.saved-loading {
+  text-align: center;
+  padding: 80px 20px;
+  font-size: 1.4rem;
+  color: #666;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  margin: 40px auto;
+  max-width: 450px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .saved-empty {
-  font-size: 1.2rem;
-  color: #333;
-  margin-top: 20px;
+  text-align: center;
+  padding: 100px 20px;
+  font-size: 1.4rem;
+  color: #666;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  margin: 40px auto;
+  max-width: 550px;
+  border: 2px dashed #e2e8f0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.saved-empty::before {
+  content: '🌍';
+  font-size: 5rem;
+  display: block;
+  margin-bottom: 25px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .saved-page h1 {
+    font-size: 3rem;
+    padding: 50px 20px 30px 20px;
+  }
+  
+  .saved-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    padding: 30px 20px;
+  }
+  
+  .saved-loading,
+  .saved-empty {
+    margin: 30px auto;
+    padding: 60px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .saved-page h1 {
+    font-size: 2.5rem;
+    padding: 40px 15px 25px 15px;
+  }
+  
+  .saved-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 25px 15px;
+  }
+  
+  .saved-loading,
+  .saved-empty {
+    margin: 20px auto;
+    padding: 50px 20px;
+    font-size: 1.2rem;
+  }
+  
+  .saved-empty::before {
+    font-size: 4rem;
+    margin-bottom: 20px;
+  }
 }
