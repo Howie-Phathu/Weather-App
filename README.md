@@ -1,12 +1,13 @@
 # Weather App
 
-A modern, full-page weather application built with React, TypeScript, and Vite. Get current weather and 3-day forecasts for your location and any city around the world.
+A modern, full-page weather application built with React, TypeScript, and Vite. Get current weather and 7-day forecasts for your location and any city around the world with interactive temperature graphs.
 
 ## Features
 
 - 🌍 **Current Location Weather**: Automatically detects and displays weather for your current location
 - 🔍 **Search Any City**: Search and get weather data for any city worldwide
-- 📅 **3-Day Forecast**: View detailed 3-day weather forecasts with temperature ranges
+- 📅 **7-Day Forecast**: View detailed 7-day weather forecasts with temperature ranges
+- 📊 **Interactive Temperature Graph**: Visualize temperature trends with beautiful charts
 - 💾 **Save Favorite Locations**: Save cities to quickly access their weather data
 - 🌡️ **Temperature Units**: Toggle between Celsius and Fahrenheit
 - 📱 **Responsive Design**: Works perfectly on desktop, tablet, and mobile devices
@@ -49,22 +50,20 @@ npm run dev
 ## Usage
 
 ### Home Page
-- Automatically displays current weather and 3-day forecast for your location
+- Automatically displays current weather and 7-day forecast for your location
+- Interactive temperature graph showing temperature trends
+- Search functionality to get weather for any city
 - Requires location permission from your browser
-
-### Search Page
-- Enter any city name to get current weather and 3-day forecast
-- Searched cities are automatically saved to your favorites
 
 ### Saved Locations
 - View weather data for all your saved cities
-- Each city shows current weather and 3-day forecast
+- Each city shows current weather and 7-day forecast
 
 ## API
 
 This app uses the [WeatherAPI.com](https://www.weatherapi.com/) service for weather data. The API provides:
 - Current weather conditions
-- 3-day weather forecasts
+- 7-day weather forecasts
 - Temperature in both Celsius and Fahrenheit
 - Humidity, wind speed, and weather descriptions
 
@@ -73,6 +72,7 @@ This app uses the [WeatherAPI.com](https://www.weatherapi.com/) service for weat
 - **React 19** - UI framework
 - **TypeScript** - Type safety
 - **Vite** - Build tool and development server
+- **Chart.js & React-ChartJS-2** - Interactive charts and graphs
 - **React Router** - Client-side routing
 - **Tailwind CSS** - Utility-first CSS framework
 - **WeatherAPI.com** - Weather data service
@@ -83,11 +83,11 @@ This app uses the [WeatherAPI.com](https://www.weatherapi.com/) service for weat
 src/
 ├── components/          # Reusable UI components
 │   ├── WeatherCard.tsx # Current weather display
-│   ├── ForecastCard.tsx # 3-day forecast display
+│   ├── ForecastCard.tsx # 7-day forecast display
+│   ├── TemperatureGraph.tsx # Interactive temperature chart
 │   └── TemperatureToggle.tsx # Unit toggle
 ├── pages/              # Page components
-│   ├── Home.tsx        # Current location weather
-│   ├── Search.tsx      # City search functionality
+│   ├── Home.tsx        # Current location weather with search
 │   └── Saved.tsx       # Saved locations
 ├── contexts/           # React contexts
 │   └── TemperatureContext.tsx # Temperature unit state

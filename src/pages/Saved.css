@@ -16,7 +16,7 @@
   font-size: 3.5rem;
   font-weight: 700;
   margin: 0;
-  padding: 60px 20px 40px 20px;
+  padding: 60px 20px 20px 20px;
   color: #2d3748;
   position: relative;
   background: white;
@@ -25,16 +25,90 @@
   flex-shrink: 0;
 }
 
-.saved-page h1::after {
-  content: '';
-  position: absolute;
-  bottom: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px;
-  height: 4px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
-  border-radius: 2px;
+.saved-header {
+  background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 60px 20px 40px 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.saved-count {
+  font-size: 1.2rem;
+  color: #666;
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+.city-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 30px 20px 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.city-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+  min-width: 200px;
+}
+
+.remove-city-button {
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.remove-city-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 100px 20px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  margin: 40px auto;
+  max-width: 550px;
+  border: 2px dashed #e2e8f0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.empty-icon {
+  font-size: 5rem;
+  margin-bottom: 25px;
+}
+
+.empty-state h2 {
+  font-size: 2rem;
+  color: #2d3748;
+  margin-bottom: 15px;
+}
+
+.empty-state p {
+  font-size: 1.2rem;
+  color: #666;
+  margin: 0;
 }
 
 .saved-cities {
@@ -160,7 +234,22 @@
 @media (max-width: 768px) {
   .saved-page h1 {
     font-size: 3rem;
+    padding: 50px 20px 20px 20px;
+  }
+  
+  .saved-header {
     padding: 50px 20px 30px 20px;
+  }
+  
+  .city-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 25px 20px 20px 20px;
+  }
+  
+  .city-title {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
   }
   
   .saved-cities {
@@ -185,7 +274,7 @@
   }
   
   .saved-loading,
-  .saved-empty {
+  .empty-state {
     margin: 30px auto;
     padding: 60px 20px;
   }
@@ -194,7 +283,15 @@
 @media (max-width: 480px) {
   .saved-page h1 {
     font-size: 2.5rem;
+    padding: 40px 15px 20px 15px;
+  }
+  
+  .saved-header {
     padding: 40px 15px 25px 15px;
+  }
+  
+  .city-title {
+    font-size: 1.5rem;
   }
   
   .saved-cities {
@@ -219,13 +316,13 @@
   }
   
   .saved-loading,
-  .saved-empty {
+  .empty-state {
     margin: 20px auto;
     padding: 50px 20px;
     font-size: 1.2rem;
   }
   
-  .saved-empty::before {
+  .empty-icon {
     font-size: 4rem;
     margin-bottom: 20px;
   }

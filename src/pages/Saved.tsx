@@ -58,7 +58,7 @@ export default function Saved() {
       for (const city of savedCities) {
         try {
           const res = await fetch(
-            `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=3&aqi=no`
+            `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=7&aqi=no`
           );
           if (!res.ok) continue;
           const data: WeatherData = await res.json();
@@ -75,20 +75,53 @@ export default function Saved() {
     if (savedCities.length) fetchAll();
   }, [savedCities]);
 
+  const handleRemoveCity = (cityName: string) => {
+    const updatedCities = savedCities.filter(city => city !== cityName);
+    setSavedCities(updatedCities);
+    localStorage.setItem("savedCities", JSON.stringify(updatedCities));
+    
+    // Update weathers state to remove the deleted city
+    setWeathers(weathers.filter(w => w.location.name !== cityName));
+  };
+
   if (loading) return <p className="saved-loading">Loading saved cities...</p>;
 
-  if (!savedCities.length) return <p className="saved-empty">No saved cities yet.</p>;
+  if (!savedCities.length) {
+    return (
+      <div className="saved-page">
+        <h1>Saved Locations</h1>
+        <div className="empty-state">
+          <div className="empty-icon">📍</div>
+          <h2>No saved locations yet</h2>
+          <p>Search for cities on the home page and save them to see them here!</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="saved-page">
-      <h1>Saved Cities</h1>
+      <div className="saved-header">
+        <h1>Saved Locations</h1>
+        <p className="saved-count">{savedCities.length} location{savedCities.length !== 1 ? 's' : ''} saved</p>
+      </div>
       <div className="saved-cities">
         {weathers.map((w) => {
           const temperature = unit === 'celsius' ? w.current.temp_c : w.current.temp_f;
           return (
             <div key={w.location.name} className="saved-city-section">
+              <div className="city-header">
+                <h2 className="city-title">{w.location.name}, {w.location.country}</h2>
+                <button 
+                  onClick={() => handleRemoveCity(w.location.name)}
+                  className="remove-city-button"
+                  title="Remove from saved locations"
+                >
+                  ❌ Remove
+                </button>
+              </div>
+              
               <div className="current-weather-section">
-                <h2 className="section-title">{w.location.name}</h2>
                 <WeatherCard
                   city={w.location.name}
                   temp={Math.round(temperature)}
@@ -101,7 +134,7 @@ export default function Saved() {
               </div>
 
               <div className="forecast-section">
-                <h3 className="forecast-title">3-Day Forecast</h3>
+                <h3 className="forecast-title">7-Day Forecast</h3>
                 <div className="forecast-grid">
                   {w.forecast.forecastday.map((day, index) => (
                     <ForecastCard
