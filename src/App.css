@@ -8,6 +8,14 @@ body {
   overflow-x: hidden;
 }
 
+#root {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
 .app-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 15px 20px;
@@ -15,6 +23,8 @@ body {
   position: sticky;
   top: 0;
   z-index: 1000;
+  flex-shrink: 0;
+  width: 100%;
 }
 
 .nav-bar {
@@ -65,8 +75,13 @@ body {
 
 .app-main {
   padding: 0;
-  min-height: calc(100vh - 80px);
-  height: calc(100vh - 80px);
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
 }
 
 /* Responsive Design */

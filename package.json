@@ -3,11 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "description": "A modern, full-page weather application with current weather and 3-day forecasts",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "setup": "node -e \"console.log('🌤️  Weather App Setup\\n=====================\\n\\n📝 Please create a .env file with your WeatherAPI key:\\nVITE_OPENWEATHER_KEY=your_api_key_here\\n\\n🔗 Get a free API key from: https://www.weatherapi.com/\\n\\n📦 Then run: npm install && npm run dev')\""
   },
   "dependencies": {
     "react": "^19.1.1",
@@ -30,7 +32,6 @@
     "typescript-eslint": "^8.39.1",
     "vite": "^7.1.2"
   },
-  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
   "main": "eslint.config.js",
   "keywords": [],
   "author": "",

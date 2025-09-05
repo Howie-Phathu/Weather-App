@@ -1,5 +1,6 @@
 import { useState } from "react";
 import WeatherCard from "../components/WeatherCard";
+import ForecastCard from "../components/ForecastCard";
 import { useTemperature } from "../contexts/TemperatureContext";
 import "./Search.css";
 
@@ -17,6 +18,23 @@ interface WeatherData {
       text: string;
       icon: string;
     };
+  };
+  forecast: {
+    forecastday: Array<{
+      date: string;
+      day: {
+        maxtemp_c: number;
+        maxtemp_f: number;
+        mintemp_c: number;
+        mintemp_f: number;
+        avghumidity: number;
+        maxwind_kph: number;
+        condition: {
+          text: string;
+          icon: string;
+        };
+      };
+    }>;
   };
 }
 
@@ -37,7 +55,7 @@ export default function Search() {
 
     try {
       const res = await fetch(
-        `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&aqi=no`
+        `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=3&aqi=no`
       );
       if (!res.ok) throw new Error("City not found");
 
@@ -97,15 +115,40 @@ export default function Search() {
       </div>
 
       {error && <p className="search-error">{error}</p>}
-      <WeatherCard
-        city={weather.location.name}
-        temp={Math.round(temperature)}
-        humidity={weather.current.humidity}
-        wind={Math.round(weather.current.wind_kph)}
-        description={weather.current.condition.text}
-        icon={weather.current.condition.icon}
-        unit={getDisplayUnit()}
-      />
+      
+      <div className="weather-content">
+        <div className="current-weather-section">
+          <h2 className="section-title">Current Weather</h2>
+          <WeatherCard
+            city={weather.location.name}
+            temp={Math.round(temperature)}
+            humidity={weather.current.humidity}
+            wind={Math.round(weather.current.wind_kph)}
+            description={weather.current.condition.text}
+            icon={weather.current.condition.icon}
+            unit={getDisplayUnit()}
+          />
+        </div>
+
+        <div className="forecast-section">
+          <h2 className="section-title">3-Day Forecast</h2>
+          <div className="forecast-grid">
+            {weather.forecast.forecastday.map((day, index) => (
+              <ForecastCard
+                key={index}
+                date={day.date}
+                maxTemp={Math.round(unit === 'celsius' ? day.day.maxtemp_c : day.day.maxtemp_f)}
+                minTemp={Math.round(unit === 'celsius' ? day.day.mintemp_c : day.day.mintemp_f)}
+                humidity={day.day.avghumidity}
+                wind={Math.round(day.day.maxwind_kph)}
+                description={day.day.condition.text}
+                icon={day.day.condition.icon}
+                unit={getDisplayUnit()}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

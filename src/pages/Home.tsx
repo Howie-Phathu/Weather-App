@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import WeatherCard from '../components/WeatherCard';
+import ForecastCard from '../components/ForecastCard';
 import { useTemperature } from '../contexts/TemperatureContext';
 import "./Home.css";
 
@@ -12,11 +13,28 @@ interface WeatherData {
         temp_c: number;
         temp_f: number;
         humidity: number;
-        wind_kph: number;
+        wind_kph: number; 
         condition: {
             text: string;
             icon: string;
         };
+    };
+    forecast: {
+        forecastday: Array<{
+            date: string;
+            day: {
+                maxtemp_c: number;
+                maxtemp_f: number;
+                mintemp_c: number;
+                mintemp_f: number;
+                avghumidity: number;
+                maxwind_kph: number;
+                condition: {
+                    text: string;
+                    icon: string;
+                };
+            };
+        }>;
     };
 }
 
@@ -38,7 +56,7 @@ export default function Home() {
                 const apiKey = import.meta.env.VITE_OPENWEATHER_KEY;
 
                 try {
-                    const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${lat},${lon}&aqi=no`);
+                    const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${lat},${lon}&days=3&aqi=no`);
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
@@ -56,31 +74,37 @@ export default function Home() {
 
     return(
         <div className="home-page">
-            <div className="hero-section">
-                <h1 className="hero-title">Welcome to WeatherApp</h1>
-                <p className="hero-subtitle">
-                    Your personal weather companion that allows you to see your current location's weather 
-                    as well as any other location you search for around the world.
-                </p>
-                <div className="hero-features">
-                    <div className="feature-item">
-                        <span className="feature-icon">📍</span>
-                        <span>Current Location Weather</span>
-                    </div>
-                    <div className="feature-item">
-                        <span className="feature-icon">🔍</span>
-                        <span>Search Any City</span>
-                    </div>
-                    <div className="feature-item">
-                        <span className="feature-icon">💾</span>
-                        <span>Save Favorite Locations</span>
-                    </div>
-                    <div className="feature-item">
-                        <span className="feature-icon">🌡️</span>
-                        <span>Celsius/Fahrenheit Toggle</span>
+            {!weatherData && !error && (
+                <div className="hero-section">
+                    <h1 className="hero-title">Welcome to WeatherApp</h1>
+                    <p className="hero-subtitle">
+                        Your personal weather companion that allows you to see your current location's weather 
+                        as well as any other location you search for around the world.
+                    </p>
+                    <div className="hero-features">
+                        <div className="feature-item">
+                            <span className="feature-icon">📍</span>
+                            <span>Current Location Weather</span>
+                        </div>
+                        <div className="feature-item">
+                            <span className="feature-icon">🔍</span>
+                            <span>Search Any City</span>
+                        </div>
+                        <div className="feature-item">
+                            <span className="feature-icon">📅</span>
+                            <span>3-Day Forecast</span>
+                        </div>
+                        <div className="feature-item">
+                            <span className="feature-icon">💾</span>
+                            <span>Save Favorite Locations</span>
+                        </div>
+                        <div className="feature-item">
+                            <span className="feature-icon">🌡️</span>
+                            <span>Celsius/Fahrenheit Toggle</span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             {error && (
                 <div className="error-message">
@@ -90,17 +114,38 @@ export default function Home() {
             )}
 
             {weatherData && (
-                <div className="current-weather-section">
-                    <h2 className="section-title">Current Location Weather</h2>
-                    <WeatherCard
-                        city={weatherData.location.name}
-                        temp={Math.round(unit === 'celsius' ? weatherData.current.temp_c : weatherData.current.temp_f)}
-                        humidity={weatherData.current.humidity}
-                        wind={Math.round(weatherData.current.wind_kph)}
-                        description={weatherData.current.condition.text}
-                        icon={weatherData.current.condition.icon}
-                        unit={getDisplayUnit()}
-                    />
+                <div className="weather-content">
+                    <div className="current-weather-section">
+                        <h2 className="section-title">Current Location Weather</h2>
+                        <WeatherCard
+                            city={weatherData.location.name}
+                            temp={Math.round(unit === 'celsius' ? weatherData.current.temp_c : weatherData.current.temp_f)}
+                            humidity={weatherData.current.humidity}
+                            wind={Math.round(weatherData.current.wind_kph)}
+                            description={weatherData.current.condition.text}
+                            icon={weatherData.current.condition.icon}
+                            unit={getDisplayUnit()}
+                        />
+                    </div>
+
+                    <div className="forecast-section">
+                        <h2 className="section-title">3-Day Forecast</h2>
+                        <div className="forecast-grid">
+                            {weatherData.forecast.forecastday.map((day, index) => (
+                                <ForecastCard
+                                    key={index}
+                                    date={day.date}
+                                    maxTemp={Math.round(unit === 'celsius' ? day.day.maxtemp_c : day.day.maxtemp_f)}
+                                    minTemp={Math.round(unit === 'celsius' ? day.day.mintemp_c : day.day.mintemp_f)}
+                                    humidity={day.day.avghumidity}
+                                    wind={Math.round(day.day.maxwind_kph)}
+                                    description={day.day.condition.text}
+                                    icon={day.day.condition.icon}
+                                    unit={getDisplayUnit()}
+                                />
+                            ))}
+                        </div>
+                    </div>
                 </div>
             )}
 
