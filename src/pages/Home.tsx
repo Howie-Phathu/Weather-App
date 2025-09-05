@@ -47,9 +47,48 @@ export default function Home() {
     const [isSaved, setIsSaved] = useState<boolean>(false);
     const { unit, getDisplayUnit } = useTemperature();
 
+    const loadWeatherForCity = async (cityQuery: string, apiKey: string) => {
+        try {
+            const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${cityQuery}&days=7&aqi=no`);
+            if (!response.ok) {
+                const errorText = await response.text();
+                let errorMessage = '';
+                
+                if (response.status === 400) {
+                    errorMessage = `City "${cityQuery}" not found. Please check the spelling and try again.`;
+                } else if (response.status === 401) {
+                    errorMessage = "Invalid API key. Please check your API key configuration.";
+                } else if (response.status === 403) {
+                    errorMessage = "API access forbidden. Please check your API key permissions.";
+                } else {
+                    errorMessage = `API Error (${response.status}): ${errorText}`;
+                }
+                
+                setError(errorMessage);
+                return false;
+            }
+            const data: WeatherData = await response.json();
+            setWeatherData(data);
+            checkIfSaved(data.location.name);
+            return true;
+        } catch (error: any) {
+            console.error('Weather API Error:', error);
+            setError(`Network error: ${error.message}`);
+            return false;
+        }
+    };
+
     useEffect(() => {
+        const apiKey = import.meta.env.VITE_OPENWEATHER_KEY;
+        
+        // Check if API key is configured
+        if (!apiKey || apiKey === 'your_weather_api_key_here') {
+            setError("Weather API key is not configured. Please add your API key to the .env file.");
+            return;
+        }
+
         if (!navigator.geolocation) {
-            setError("Geolocation is not supported by this browser.");
+            setError("Geolocation is not supported by this browser. Please search for a city manually.");
             return;
         }
 
@@ -57,22 +96,41 @@ export default function Home() {
             async (position) => {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
-                const apiKey = import.meta.env.VITE_OPENWEATHER_KEY;
-
-                try {
-                    const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${lat},${lon}&days=7&aqi=no`);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    const data: WeatherData = await response.json();
-                    setWeatherData(data);
-                    checkIfSaved(data.location.name);
-                } catch (error: any) {
-                    setError(`Error fetching weather data: ${error.message}`);
+                const success = await loadWeatherForCity(`${lat},${lon}`, apiKey);
+                if (!success) {
+                    setError("Error fetching weather data for your location. Please search for a city manually.");
                 }
             },
-            (error) => {
-                setError(`Geolocation error: ${error.message}`);
+            async (error) => {
+                console.error('Geolocation Error:', error);
+                let errorMessage = '';
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = "Location access denied. Loading weather for London as fallback.";
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = "Location information unavailable. Loading weather for London as fallback.";
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = "Location request timed out. Loading weather for London as fallback.";
+                        break;
+                    default:
+                        errorMessage = `Geolocation error: ${error.message}. Loading weather for London as fallback.`;
+                        break;
+                }
+                
+                // Try to load weather for London as fallback
+                const fallbackSuccess = await loadWeatherForCity('London', apiKey);
+                if (!fallbackSuccess) {
+                    setError(`${errorMessage} Failed to load fallback weather data. Please search for a city manually.`);
+                } else {
+                    setError(errorMessage);
+                }
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000
             }
         );
     }, []);
@@ -84,19 +142,15 @@ export default function Home() {
         setError(null);
         const apiKey = import.meta.env.VITE_OPENWEATHER_KEY;
 
-        try {
-            const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${searchCity}&days=7&aqi=no`);
-            if (!response.ok) {
-                throw new Error('City not found');
-            }
-            const data: WeatherData = await response.json();
-            setWeatherData(data);
-            checkIfSaved(data.location.name);
-        } catch (error: any) {
-            setError(`Error fetching weather data: ${error.message}`);
-        } finally {
+        // Check if API key is configured
+        if (!apiKey || apiKey === 'your_weather_api_key_here') {
+            setError("Weather API key is not configured. Please add your API key to the .env file.");
             setIsSearching(false);
+            return;
         }
+
+        await loadWeatherForCity(searchCity, apiKey);
+        setIsSearching(false);
     };
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -195,7 +249,20 @@ export default function Home() {
             {error && (
                 <div className="error-message">
                     <p>{error}</p>
-                    <p className="error-hint">Try refreshing the page or check your internet connection.</p>
+                    {error.includes("API key") && (
+                        <div className="api-key-help">
+                            <p className="error-hint">To fix this:</p>
+                            <ol>
+                                <li>Get a free API key from <a href="https://www.weatherapi.com/" target="_blank" rel="noopener noreferrer">weatherapi.com</a></li>
+                                <li>Open the <code>.env</code> file in your project root</li>
+                                <li>Replace <code>your_weather_api_key_here</code> with your actual API key</li>
+                                <li>Restart the development server</li>
+                            </ol>
+                        </div>
+                    )}
+                    {!error.includes("API key") && (
+                        <p className="error-hint">Try refreshing the page or check your internet connection.</p>
+                    )}
                 </div>
             )}
 

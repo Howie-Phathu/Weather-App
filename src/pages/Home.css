@@ -276,6 +276,42 @@
   font-style: italic;
 }
 
+.api-key-help {
+  margin-top: 15px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid #ff6b6b;
+}
+
+.api-key-help ol {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.api-key-help li {
+  margin: 8px 0;
+  line-height: 1.4;
+}
+
+.api-key-help code {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+.api-key-help a {
+  color: #4a90e2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.api-key-help a:hover {
+  text-decoration: underline;
+}
+
 .loading-placeholder {
   text-align: center;
   padding: 80px 20px;
